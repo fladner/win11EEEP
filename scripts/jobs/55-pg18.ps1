@@ -16,12 +16,17 @@ for ($i = 0; $i -lt 3 -and -not $pw; $i++) {
 }
 if (-not $pw) { L 'FALHA: senha do postgres nao informada'; return }
 if (Test-Path 'C:\Program Files\PostgreSQL\18\data') { Rename-Item 'C:\Program Files\PostgreSQL\18\data' ("data-antiga-{0:yyyyMMddHHmm}" -f (Get-Date)) }
-$args = @('--mode', 'unattended', '--unattendedmodeui', 'none', '--superaccount', 'postgres', '--superpassword', "`"$pw`"",
-    '--servicename', 'postgresql-x64-18', '--serverport', '5432', '--locale', 'Portuguese_Brazil.1252',
-    '--enable-components', 'server,pgAdmin,commandlinetools', '--disable-components', 'stackbuilder')
-$p = Start-Process $inst -ArgumentList $args -PassThru
-$pw = $null; $args = $null
-if ($p.WaitForExit(60 * 60000)) { L "PostgreSQL 18 exit=$($p.ExitCode)" } else { L 'PostgreSQL 18 TIMEOUT' }
+# mesmo formato do kit: arquivo de opcoes sem BOM (com BOM o instalador abre a interface grafica), apagado em seguida
+$opt = Join-Path $env:TEMP ("pg18-{0}.ini" -f [guid]::NewGuid().ToString('N'))
+$lines = @('mode=unattended', 'unattendedmodeui=none', 'superaccount=postgres', "superpassword=$pw", 'serverport=5432', 'disable-components=stackbuilder')
+[IO.File]::WriteAllLines($opt, $lines, (New-Object Text.UTF8Encoding $false))
+$pw = $null; $lines = $null
+try {
+    $p = Start-Process $inst -ArgumentList '--mode', 'unattended', '--unattendedmodeui', 'none', '--optionfile', "`"$opt`"" -PassThru
+    if ($p.WaitForExit(60 * 60000)) { L "PostgreSQL 18 exit=$($p.ExitCode)" } else { L 'PostgreSQL 18 TIMEOUT' }
+} finally { Remove-Item $opt -Force -ErrorAction SilentlyContinue }
+$il = Get-ChildItem $env:TEMP, 'C:\Windows\Temp' -Filter 'install-postgresql*.log' -ErrorAction SilentlyContinue | Sort-Object LastWriteTime | Select-Object -Last 1
+if ($il) { L "log do instalador: $($il.FullName)"; Get-Content $il.FullName -Tail 8 | Where-Object { $_ -notmatch 'password' } | ForEach-Object { L "   $_" } }
 $bin = 'C:\Program Files\PostgreSQL\18\bin'
 $mp = [Environment]::GetEnvironmentVariable('Path', 'Machine')
 if ((Test-Path "$bin\psql.exe") -and ($mp -split ';') -notcontains $bin) { [Environment]::SetEnvironmentVariable('Path', "$mp;$bin", 'Machine'); L 'PATH += PostgreSQL 18\bin' }

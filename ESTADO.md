@@ -28,6 +28,12 @@
   1. Mesma versao do Windows (sem atualizacao de versao) + todos os programas de PROGRAMAS.md.
   2. Depois, tudo atualizado (Windows inclusive).
 - Trocar a senha do Administrador pela atual: o USUARIO digita na VM (Claude nao digita senhas).
+- Docker Desktop (WSL2/hipervisor): SOMENTE na versao 2 (decisao do usuario, 16/11). Node.js LTS e IntelliJ IDEA
+  Community entram nas duas (jobs\54).
+- VM de build: EEEP-2025 (vm\eeep2025, NAT com localhost-reachable ligado, kit.viso como D:), snapshot
+  base-2025-instalada. Sequencia: scripts\host\Sequencia-2025.ps1. PostgreSQL 18: jobs\55 (senha digitada na VM).
+- Kali Linux fica FORA (decisao do usuario, 16/11). VisuAlg: jobs\56 (ja aplicado na VM).
+- Faltam instaladores (usuario vai buscar): Solid Edge 2026, SinuTrain, Multisim 14.3, PSIM Demo, Proteus 9 Demo.
 - v3 26H2 (D:\EEEP\Win11Pro_26H2_EEEP_v3.iso, SHA256 D4E53E6A...9FA5) tem a correcao do defaultuser0, mas o teste
   ficou suspenso (VM EEEP-Teste com estado salvo, disco SATA). O VirtualBox nao emula NVMe para o WinPE 26100
   (stornvme codigo 10, 0xC000000D), entao o caso do Positivo nao foi reproduzido.

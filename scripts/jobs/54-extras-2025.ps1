@@ -24,7 +24,7 @@ function WG($id, $extra = '') {
 
 L '===== WinGet (por maquina) ====='
 & $wg source update --name winget 2>&1 | Out-Null
-foreach ($id in 'Microsoft.VCRedist.2015+.x64', 'Microsoft.VCRedist.2015+.x86', 'Git.Git', 'RustDesk.RustDesk', 'Python.Python.3.14', 'CodeBlocks.CodeBlocks') { WG $id }
+foreach ($id in 'Microsoft.VCRedist.2015+.x64', 'Microsoft.VCRedist.2015+.x86', 'Git.Git', 'RustDesk.RustDesk', 'Python.Python.3.14', 'CodeBlocks.CodeBlocks', 'OpenJS.NodeJS.LTS', 'JetBrains.IntelliJIDEA.Community') { WG $id }
 
 L '===== instaladores locais ====='
 Run 'MySQL Workbench 8.0.36' 'msiexec.exe' @('/i', "`"$X\mysql-workbench-community-8.0.36-winx64.msi`"", '/qn', '/norestart', 'ALLUSERS=1')
@@ -40,6 +40,7 @@ $chk = [ordered]@{
     'Git' = 'C:\Program Files\Git\cmd\git.exe'; 'RustDesk' = 'C:\Program Files\RustDesk\rustdesk.exe'; 'Python 3.14' = 'C:\Program Files\Python314\python.exe'
     'CodeBlocks' = 'C:\Program Files\CodeBlocks\codeblocks.exe'; 'MySQL Workbench' = 'C:\Program Files\MySQL\MySQL Workbench 8.0*\MySQLWorkbench.exe'
     'Portugol Studio' = 'C:\ProgramData\UNIVALI\Portugol Studio\*.exe'; 'Dev-C++' = 'C:\Dev-Cpp\devcpp.exe'
+    'Node.js' = 'C:\Program Files\nodejs\node.exe'; 'IntelliJ IDEA' = 'C:\Program Files\JetBrains\IntelliJ IDEA*\bin\idea64.exe'
 }
 foreach ($k in $chk.Keys) { L ("{0,-16} {1}" -f $k, [bool](Get-Item $chk[$k] -ErrorAction SilentlyContinue)) }
 L "servico RustDesk: $((Get-Service RustDesk -ErrorAction SilentlyContinue).Status)"
