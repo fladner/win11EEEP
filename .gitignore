@@ -1,0 +1,16 @@
+# Imagens e VM (grandes demais para o Git)
+*.iso
+*.wim
+*.esd
+*.vdi
+*.vhd
+*.vhdx
+/vm/
+/build/
+
+# Instaladores baixados pelo kit (recriados por BAIXAR-PACOTES.cmd)
+/implantacao-lab-windows11/Pacotes/*
+!/implantacao-lab-windows11/Pacotes/LEIA-ME.txt
+
+# area de trabalho do build
+/scripts/capture/cap2.cmd

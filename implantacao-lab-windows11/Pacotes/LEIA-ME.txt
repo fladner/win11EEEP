@@ -1,0 +1,30 @@
+PASTA PACOTES
+=============
+
+O jeito mais fácil de preencher esta pasta é executar BAIXAR-PACOTES.cmd
+(na pasta principal do kit) uma vez, num computador com boa Internet.
+O instalador usa tudo o que estiver aqui e só baixa pela Internet o que faltar.
+
+Estrutura criada pelo BAIXAR-PACOTES.cmd:
+
+  WinGet\<Id do pacote>\   instaladores oficiais obtidos com "winget download"
+  Maven\                    apache-maven-<versão>-bin.zip e .sha512
+  Flutter\                  flutter_windows_<versão>-stable.zip
+  Nmap\                     nmap-<versão>-setup.exe
+  Android\                  commandlinetools-win-*_latest.zip e
+                            android-sdk-api36.zip (SDK completo)
+
+ARQUIVOS MANUAIS
+================
+
+1. Cisco Packet Tracer (exige login na NetAcad)
+   - Instalador oficial de Windows 64 bits, nome com "Packet" e "Tracer", .exe
+   - Exemplo: CiscoPacketTracer_901_win_64bit.exe
+
+2. VisuAlg 3 (o BAIXAR-PACOTES tenta baixar; se falhar, baixe pelo navegador)
+   - visualg3.0.7.rar
+   - https://sourceforge.net/projects/visualg30/files/visualg3.0.7.rar/download
+
+Também dá para baixar qualquer instalador pelo navegador e colocá-lo em
+WinGet\<Id>\ (ex.: WinGet\Oracle.VirtualBox\VirtualBox-7.2.22-175245-Win.exe).
+Use o instalador de 64 bits, para todos os usuários (não o "User Setup").
