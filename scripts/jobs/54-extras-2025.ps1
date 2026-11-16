@@ -16,9 +16,8 @@ function WG($id, $extra = '') {
     if (-not $wg) { L "$id FALHA: winget ausente"; return }
     $out = cmd /c "`"$wg`" install --id $id --exact --source winget --scope machine --silent --accept-package-agreements --accept-source-agreements --disable-interactivity $extra 2>&1"
     $code = $LASTEXITCODE
-    if ($code -ne 0 -and ($out -join ' ') -match 'escopo|scope|0x8A150037|No applicable installer') {
-        $out = cmd /c "`"$wg`" install --id $id --exact --source winget --silent --accept-package-agreements --accept-source-agreements --disable-interactivity $extra 2>&1"; $code = $LASTEXITCODE
-    }
+    # sem alternativa "por usuario": todos os programas precisam ficar disponiveis para todos os usuarios
+
     L ("{0} exit=0x{1:X8} {2}" -f $id, $code, (($out | Where-Object { $_ -and $_.Trim().Length -gt 3 -and $_ -notmatch '[\u2588\u2592]|^\s*[-\\|/]\s*$' } | Select-Object -Last 1) -join ''))
 }
 
