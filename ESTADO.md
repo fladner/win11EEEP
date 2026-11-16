@@ -21,7 +21,18 @@
 
 - Revit 2026 removido e Revit 2027 (27.0.4.412) instalado (`jobs\40`).
 
-## PONTO DE RETOMADA ATUAL (16/11 ~09:50) — v2 GERADA, EM TESTE
+## NOVO PLANO (16/11 tarde) — v3 26H2 SUSPENSA, BASE NOVA = ISO ANTIGA DO USUARIO
+- A v1 26H2 entrou em looping de reinicio num Positivo real (NVMe, i3-10100T). O usuario trara hoje a noite uma ISO
+  Windows 11 mais antiga, que funciona em qualquer PC, com menos programas e a senha antiga do Administrador.
+- Gerar DUAS ISOs a partir dela:
+  1. Mesma versao do Windows (sem atualizacao de versao) + todos os programas de PROGRAMAS.md.
+  2. Depois, tudo atualizado (Windows inclusive).
+- Trocar a senha do Administrador pela atual: o USUARIO digita na VM (Claude nao digita senhas).
+- v3 26H2 (D:\EEEP\Win11Pro_26H2_EEEP_v3.iso, SHA256 D4E53E6A...9FA5) tem a correcao do defaultuser0, mas o teste
+  ficou suspenso (VM EEEP-Teste com estado salvo, disco SATA). O VirtualBox nao emula NVMe para o WinPE 26100
+  (stornvme codigo 10, 0xC000000D), entao o caso do Positivo nao foi reproduzido.
+
+## PONTO DE RETOMADA ANTERIOR (16/11 ~09:50) — v2 GERADA, EM TESTE
 - v2: C:\win11EEEP\Win11Pro_26H2_EEEP_v2.iso (68,94 GB), SHA256
   22FE6F16DE224926DCB7FAAE8B73FA3B7691CDBB9882B09FEDDF74FEEE954459. Tem Winre.wim, EEEP-PrimeiroBoot.ps1 corrigido
   (sc.exe + taskkill) e unattend com `net user Administrador /active:yes` como Order 1 (conferidos dentro do wim).
