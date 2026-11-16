@@ -26,6 +26,15 @@ $p = Start-Process "$se\setup.exe" -ArgumentList '/s', '/l1046', "/v`"/qn ALLUSE
 if ($p.WaitForExit(120 * 60000)) { L "Solid Edge setup exit=$($p.ExitCode)" } else { L 'Solid Edge TIMEOUT' }
 for ($i = 0; $i -lt 90 -and (Get-Process msiexec, setup -ErrorAction SilentlyContinue | Where-Object { $_.Path -like "$tmp*" -or $_.Name -eq 'msiexec' }) -and (Test-Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\InProgress'); $i++) { Start-Sleep 10 }
 
+L '===== Proteus 9 Demonstration ====='
+if (Test-Path "${dvd}:\proteus.exe") {
+    WaitMsi
+    Copy-Item "${dvd}:\proteus.exe" "$tmp\proteus.exe" -Force
+    $p = Start-Process "$tmp\proteus.exe" -ArgumentList '/quiet', '/norestart', '/log', "`"$tmp\proteus.log`"" -PassThru
+    if ($p.WaitForExit(60 * 60000)) { L "Proteus exit=$($p.ExitCode)" } else { L 'Proteus TIMEOUT' }
+    L "Proteus: $(Test-Path 'C:\Program Files\Labcenter Electronics\Proteus 9 Demonstration\BIN\PDS.EXE')"
+}
+
 L '===== conferencia ====='
 L "Solid Edge: $(Test-Path 'C:\Program Files\Siemens\Solid Edge 2026\Program\Edge.exe')"
 $st = Get-ChildItem 'C:\Program Files (x86)\Siemens\SinuTrain', 'C:\Program Files\Siemens\SinuTrain' -Recurse -Filter '*.exe' -Depth 3 -ErrorAction SilentlyContinue | Select-Object -First 3 -ExpandProperty FullName
