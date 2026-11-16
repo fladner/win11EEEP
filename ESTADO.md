@@ -21,7 +21,14 @@
 
 - Revit 2026 removido e Revit 2027 (27.0.4.412) instalado (`jobs\40`).
 
-## PONTO DE RETOMADA ATUAL (15/11 ~21:20) — SYSPREP FEITO, FALTA CAPTURAR
+## PONTO DE RETOMADA ATUAL (16/11 ~03:30) — ISO GERADA, EM TESTE
+- Captura ok (dism exit=0). 1a ISO falhou na instalacao (0x80070003: faltava Windows\System32\Recovery\Winre.wim).
+  Corrigido com scripts\capture\winre-fix.cmd (Winre.wim oficial inserido no install.wim do captura.vdi, commit ok).
+- ISO final: C:\win11EEEP\Win11Pro_26H2_EEEP.iso (68,75 GB), SHA256 2B5F5A5FCA30FE1A0FC2D1552ED08338E57F6F92569A64C1DBA8AA449DB95FD7.
+- Teste na VM EEEP-Teste (scripts\host\Criar-VM-Teste.ps1) em andamento; usuario precisa da ISO pronta as 06:00 de 16/11.
+- Plano B se o setup novo falhar: link "Versao anterior da instalacao" na tela de opcoes do instalador.
+
+## PONTO DE RETOMADA ANTERIOR (15/11 ~21:20) — SYSPREP FEITO, FALTA CAPTURAR
 - Tudo instalado e testado como Aluno (usuario confirmou). AutoCAD 2027 oficial 26.0.60, Revit 2027, XAMPP 8.2 reinstalado
   (servicos ok), PostgreSQL 18 ok, limpeza feita. Hipervisor do host DESLIGADO (bcdedit off): religar com `auto` no fim.
 - Snapshots: `pre-sysprep` (tudo pronto, antes de generalizar) e `pos-sysprep` (generalizado). NAO dar boot pelo disco.

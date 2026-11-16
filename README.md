@@ -23,6 +23,9 @@ As imagens (`*.iso`, `*.wim`, discos de VM) e os instaladores do kit não ficam 
    (MachineGuid, IDs do AnyDesk e do RustDesk, preservando senha e servidor do RustDesk) e reativa o Administrador.
 6. Captura pelo WinPE da ISO oficial (`scripts/capture/cap.cmd`) e montagem da ISO (`scripts/host/Montar-ISO.ps1`):
    instalador oficial 26H2 + `install.wim` capturado + `ei.cfg` (Pro), gerada com `oscdimg` (UDF, boot BIOS+UEFI).
+   O WinRE da origem fica na partição de recuperação e não entra na captura; o instalador do 26H2 exige
+   `\Windows\System32\Recovery\Winre.wim` na imagem (sem ele falha com 0x80070003). `scripts/capture/winre-fix.cmd`
+   (no WinPE) insere o `Winre.wim` da ISO oficial no `install.wim`, e o `Montar-ISO.ps1` confere a presença dele.
 
 ## Gravação em pendrive
 

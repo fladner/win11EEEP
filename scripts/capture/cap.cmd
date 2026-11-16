@@ -1,6 +1,8 @@
 @echo off
 rem Executado no WinPE (Shift+F10 na tela do instalador). Formata o disco vazio de destino (300 GB,
 rem porta SATA 2 = Disco 1), localiza a particao do Windows generalizado e captura a imagem.
+rem ATENCAO: o WinRE da origem fica na particao de recuperacao e nao entra na captura. Depois desta etapa,
+rem rode winre-fix.cmd (ou faca "reagentc /disable" antes do sysprep) para incluir o Winre.wim na imagem.
 set WIN=
 for %%i in (C D E F G H I J K L M N O P) do if exist %%i:\Windows\System32\config\SOFTWARE if exist %%i:\Users\Aluno set WIN=%%i
 if "%WIN%"=="" (echo Windows da imagem nao encontrado & goto :eof)
