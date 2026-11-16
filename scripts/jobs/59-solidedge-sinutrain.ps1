@@ -1,0 +1,35 @@
+# Solid Edge Student 2026 (pt-BR) e SinuTrain for SINUMERIK Operate 4.5 HF1, por maquina.
+# Instaladores do usuario no DVD EEEPEXTRA (build\extra.viso). Rodar como Administrador.
+$ErrorActionPreference = 'Continue'
+$log = 'C:\ProgramData\EEEPBuild\programas.log'
+function L($m) { $l = "{0} {1}" -f (Get-Date -Format 'HH:mm:ss'), $m; Add-Content $log $l; $l }
+function WaitMsi { for ($i = 0; $i -lt 90 -and (Test-Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\InProgress'); $i++) { Start-Sleep 10 } }
+$dvd = (Get-Volume | Where-Object FileSystemLabel -eq 'EEEPEXTRA' | Select-Object -First 1).DriveLetter
+if (-not $dvd) { L 'FALHA: DVD EEEPEXTRA nao encontrado'; return }
+$tmp = 'C:\ProgramData\EEEPBuild\extra'; New-Item -ItemType Directory -Force $tmp | Out-Null
+$7z = 'C:\Program Files\7-Zip\7z.exe'
+
+L '===== SinuTrain 4.5 HF1 ====='
+& $7z x "${dvd}:\sinutrain.zip" "-o$tmp\sinutrain" -y -bso0 -bsp0; L "extraido (exit=$LASTEXITCODE)"
+WaitMsi
+$p = Start-Process msiexec.exe -ArgumentList '/i', "`"$tmp\sinutrain\sinutrain.msi`"", "TRANSFORMS=`"$tmp\sinutrain\1033.mst`"", 'ALLUSERS=1', '/qn', '/norestart', '/l*v', "`"$tmp\sinutrain.log`"" -PassThru
+if ($p.WaitForExit(40 * 60000)) { L "SinuTrain exit=$($p.ExitCode)" } else { L 'SinuTrain TIMEOUT' }
+
+L '===== Solid Edge Student 2026 (pt-BR) ====='
+& $7z x "${dvd}:\solidedge.zip" "-o$tmp\se" -y -bso0 -bsp0; L "extraido (exit=$LASTEXITCODE)"
+$se = "$tmp\se\Solid Edge"
+WaitMsi
+$vc = "$se\ISSetupPrerequisites\MS VC++ 2022 Redist (x64)\VC_redist.x64.exe"
+if (Test-Path $vc) { $p = Start-Process $vc -ArgumentList '/install', '/quiet', '/norestart' -PassThru; [void]$p.WaitForExit(15 * 60000); L "VC++ 2022 x64 exit=$($p.ExitCode)" }
+WaitMsi
+$p = Start-Process "$se\setup.exe" -ArgumentList '/s', '/l1046', "/v`"/qn ALLUSERS=1 REBOOT=ReallySuppress /l*v \`"$tmp\solidedge.log\`"`"" -PassThru
+if ($p.WaitForExit(120 * 60000)) { L "Solid Edge setup exit=$($p.ExitCode)" } else { L 'Solid Edge TIMEOUT' }
+for ($i = 0; $i -lt 90 -and (Get-Process msiexec, setup -ErrorAction SilentlyContinue | Where-Object { $_.Path -like "$tmp*" -or $_.Name -eq 'msiexec' }) -and (Test-Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\InProgress'); $i++) { Start-Sleep 10 }
+
+L '===== conferencia ====='
+L "Solid Edge: $(Test-Path 'C:\Program Files\Siemens\Solid Edge 2026\Program\Edge.exe')"
+$st = Get-ChildItem 'C:\Program Files (x86)\Siemens\SinuTrain', 'C:\Program Files\Siemens\SinuTrain' -Recurse -Filter '*.exe' -Depth 3 -ErrorAction SilentlyContinue | Select-Object -First 3 -ExpandProperty FullName
+L "SinuTrain: $($st -join '; ')"
+Get-ChildItem 'C:\Users\Public\Desktop\*.lnk' | Where-Object Name -match 'Solid|SinuTrain' | ForEach-Object { L "atalho: $($_.Name)" }
+if ((Test-Path 'C:\Program Files\Siemens\Solid Edge 2026\Program\Edge.exe') -and $st) { Remove-Item $tmp -Recurse -Force -ErrorAction SilentlyContinue; L 'arquivos temporarios removidos' }
+"C: livre GB: $([math]::Round((Get-PSDrive C).Free/1GB,1))"
