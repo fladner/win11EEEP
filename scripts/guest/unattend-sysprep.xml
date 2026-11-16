@@ -34,6 +34,9 @@
         <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
         <HideLocalAccountScreen>true</HideLocalAccountScreen>
         <ProtectYourPC>3</ProtectYourPC>
+        <!-- sem isto o OOBE do 26H2 cria a conta temporaria defaultuser0, entra nela sozinho e fica em "Um momento..." -->
+        <SkipMachineOOBE>true</SkipMachineOOBE>
+        <SkipUserOOBE>true</SkipUserOOBE>
       </OOBE>
     </component>
   </settings>

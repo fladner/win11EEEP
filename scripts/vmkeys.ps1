@@ -29,7 +29,7 @@ $Keys = @($Keys | ForEach-Object {
         foreach ($ch in $_.Substring(5).ToCharArray()) {
             switch -CaseSensitive ($ch) {
                 ' '  { 'space' } '-' { 'minus' } '.' { 'dot' } ':' { 'shift+semi' } '\' { 'bslash' } '/' { 'slash' } '?' { 'shift+slash' } '=' { 'equal' } ';' { 'semi' }
-                '"' { 'shift+quote' } "'" { 'quote' } '(' { 'shift+9' } ')' { 'shift+0' } '$' { 'shift+4' } '%' { 'shift+5' } '*' { 'shift+8' } '>' { 'shift+dot' } '|' { 'shift+bslash' } '~' { 'tilde'; 'space' }
+                '"' { 'shift+quote' } "'" { 'quote' } '(' { 'shift+9' } ')' { 'shift+0' } '$' { 'shift+4' } '%' { 'shift+5' } '*' { 'shift+8' } '>' { 'shift+dot' } '|' { 'shift+bslash' } '&' { 'shift+7' } '+' { 'shift+equal' } '_' { 'shift+minus' } '~' { 'tilde'; 'space' }
                 default { if ([char]::IsUpper($ch)) { "shift+$([char]::ToLower($ch))" } else { [string]$ch } }
             }
         }
