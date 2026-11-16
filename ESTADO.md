@@ -114,3 +114,4 @@ Depois do reinicio do host:
 - Usuarios mantidos como estao; ISO instalavel em qualquer PC compativel; sem limite de tamanho.
 - Sem AppLocker por enquanto. MySQL Server fica no 8.0. Dev-C++ fica no 4.9.9.2. RustDesk ja atualizado pelo usuario.
 - Licencas dos programas: usuario autorizou aceite automatico. Senha do postgres informada pelo usuario (nao registrar).
+- VM EEEP-2025: DNS fixo 8.8.8.8/1.1.1.1 no adaptador Ethernet (o DNS repassado pelo NAT parou). ANTES DO SYSPREP: Set-DnsClientServerAddress -InterfaceAlias Ethernet -ResetServerAddresses.

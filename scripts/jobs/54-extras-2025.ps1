@@ -25,6 +25,20 @@ L '===== WinGet (por maquina) ====='
 & $wg source update --name winget 2>&1 | Out-Null
 foreach ($id in 'Microsoft.VCRedist.2015+.x64', 'Microsoft.VCRedist.2015+.x86', 'Git.Git', 'RustDesk.RustDesk', 'Python.Python.3.14', 'CodeBlocks.CodeBlocks', 'OpenJS.NodeJS.LTS', 'JetBrains.IntelliJIDEA.Community') { WG $id }
 
+if (-not (Test-Path 'C:\Program Files\RustDesk\rustdesk.exe')) {
+    # RustDesk saiu do catalogo do WinGet: MSI x86_64 da release oficial no GitHub (rustdesk/rustdesk)
+    try {
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        $rel = Invoke-RestMethod 'https://api.github.com/repos/rustdesk/rustdesk/releases/latest' -UseBasicParsing -Headers @{ 'User-Agent' = 'eeep-build' }
+        $a = $rel.assets | Where-Object name -match 'x86_64\.msi$' | Select-Object -First 1
+        $msi = "C:\ProgramData\EEEPBuild\$($a.name)"
+        Invoke-WebRequest $a.browser_download_url -OutFile $msi -UseBasicParsing
+        L "RustDesk $($rel.tag_name): $($a.name) assinatura=$((Get-AuthenticodeSignature $msi).Status)"
+        Run "RustDesk $($rel.tag_name)" 'msiexec.exe' @('/i', "`"$msi`"", '/qn', '/norestart')
+        Remove-Item $msi -Force -ErrorAction SilentlyContinue
+    } catch { L "RustDesk FALHA: $($_.Exception.Message)" }
+}
+
 L '===== instaladores locais ====='
 Run 'MySQL Workbench 8.0.36' 'msiexec.exe' @('/i', "`"$X\mysql-workbench-community-8.0.36-winx64.msi`"", '/qn', '/norestart', 'ALLUSERS=1')
 Run 'Portugol Studio 2.7.5' "$X\portugol-studio-2.7.5-windows.exe" @('--mode', 'unattended', '--unattendedmodeui', 'none')
