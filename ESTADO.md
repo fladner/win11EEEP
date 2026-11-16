@@ -21,12 +21,29 @@
 
 - Revit 2026 removido e Revit 2027 (27.0.4.412) instalado (`jobs\40`).
 
-## PONTO DE RETOMADA ATUAL (16/11 ~03:30) — ISO GERADA, EM TESTE
+## PONTO DE RETOMADA ATUAL (16/11 ~09:50) — v2 GERADA, EM TESTE
+- v2: C:\win11EEEP\Win11Pro_26H2_EEEP_v2.iso (68,94 GB), SHA256
+  22FE6F16DE224926DCB7FAAE8B73FA3B7691CDBB9882B09FEDDF74FEEE954459. Tem Winre.wim, EEEP-PrimeiroBoot.ps1 corrigido
+  (sc.exe + taskkill) e unattend com `net user Administrador /active:yes` como Order 1 (conferidos dentro do wim).
+- Corrigida no WinPE com scripts\capture\script-fix.cmd (16 GB de RAM na VM; 4 GB da erro 0x80070008 no mount).
+- Instalacao de teste na VM EEEP-Teste iniciada ~09:45. Depois de aprovada: enviar ao Google Drive do usuario
+  (metodo a escolher) e apagar a v1.
+
+## PONTO DE RETOMADA ANTERIOR (16/11 ~03:30) — ISO v1 GERADA
 - Captura ok (dism exit=0). 1a ISO falhou na instalacao (0x80070003: faltava Windows\System32\Recovery\Winre.wim).
   Corrigido com scripts\capture\winre-fix.cmd (Winre.wim oficial inserido no install.wim do captura.vdi, commit ok).
 - ISO final: C:\win11EEEP\Win11Pro_26H2_EEEP.iso (68,75 GB), SHA256 2B5F5A5FCA30FE1A0FC2D1552ED08338E57F6F92569A64C1DBA8AA449DB95FD7.
 - Teste na VM EEEP-Teste (scripts\host\Criar-VM-Teste.ps1) em andamento; usuario precisa da ISO pronta as 06:00 de 16/11.
 - Plano B se o setup novo falhar: link "Versao anterior da instalacao" na tela de opcoes do instalador.
+- ~04:40: a copia da imagem terminou, mas no specialize o EEEP-PrimeiroBoot.ps1 TRAVA em Stop-Service AnyDesk
+  ("Aguardando que o servico AnyDesk seja parado..."). Contorno manual: Shift+F10 e `taskkill /f /im AnyDesk.exe`
+  (e `taskkill /f /im rustdesk.exe`). Script corrigido no repo (sc.exe + taskkill, sem esperar). Para corrigir a ISO:
+  VM com WinPE + captura.vdi + build\script.viso -> fix.cmd (scripts\capture\script-fix.cmd), depois
+  `Montar-ISO.ps1 -ReusarInstalador`.
+- ~04:45: instalacao de teste passou do specialize e chegou ao OOBE ("Um momento..."). VM EEEP-26H2 ligada (4 GB RAM)
+  no Boot Manager do firmware com SATA1 = ISO oficial, SATA2 = captura.vdi, SATA3 = build\script.viso: escolher
+  "UEFI VBOX CD-ROM VB1", espaco, Shift+F10 e `for %i in (C D E F G H I J) do if exist %i:\fix.cmd %i:\fix.cmd`.
+  Interrompido porque a verificacao automatica de comandos do Claude parou de responder.
 
 ## PONTO DE RETOMADA ANTERIOR (15/11 ~21:20) — SYSPREP FEITO, FALTA CAPTURAR
 - Tudo instalado e testado como Aluno (usuario confirmou). AutoCAD 2027 oficial 26.0.60, Revit 2027, XAMPP 8.2 reinstalado

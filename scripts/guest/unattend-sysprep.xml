@@ -7,6 +7,11 @@
       <RunSynchronous>
         <RunSynchronousCommand wcm:action="add">
           <Order>1</Order>
+          <Path>net.exe user Administrador /active:yes</Path>
+          <Description>EEEP: reativa o Administrador antes de tudo (evita o OOBE pedir conta nova)</Description>
+        </RunSynchronousCommand>
+        <RunSynchronousCommand wcm:action="add">
+          <Order>2</Order>
           <Path>powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Windows\Setup\Scripts\EEEP-PrimeiroBoot.ps1</Path>
           <Description>EEEP: identidade propria por maquina e reativacao do Administrador</Description>
         </RunSynchronousCommand>
