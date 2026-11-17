@@ -45,6 +45,24 @@ if (Test-Path "${dvd}:\psim.zip") {
     L "PSIM: $($pe.FullName)"
 }
 
+L '===== NI Circuit Design Suite 14.2 (Multisim), sem ativacao: modo de avaliacao ====='
+# Somente a ISO oficial da NI (assinatura National Instruments). Nenhum ativador/crack e usado.
+if (Test-Path "${dvd}:\ni-cds.iso") {
+    Copy-Item "${dvd}:\ni-cds.iso" "$tmp\ni-cds.iso" -Force
+    $img = Mount-DiskImage -ImagePath "$tmp\ni-cds.iso" -PassThru
+    $nl = ($img | Get-Volume).DriveLetter
+    $sig = Get-AuthenticodeSignature "${nl}:\Install.exe"
+    L "NI Install.exe: $($sig.Status) $($sig.SignerCertificate.Subject -replace ',.*')"
+    if ($sig.Status -eq 'Valid' -and $sig.SignerCertificate.Subject -like '*National Instruments*') {
+        WaitMsi
+        $p = Start-Process "${nl}:\Install.exe" -ArgumentList '--passive', '--accept-eulas', '--prevent-reboot', '--prevent-activation' -PassThru
+        if ($p.WaitForExit(120 * 60000)) { L "NI CDS exit=$($p.ExitCode)" } else { L 'NI CDS TIMEOUT' }
+    } else { L 'NI CDS: assinatura invalida, nao instalado' }
+    Dismount-DiskImage -ImagePath "$tmp\ni-cds.iso" | Out-Null
+    $ms = Get-ChildItem 'C:\Program Files (x86)\National Instruments', 'C:\Program Files\National Instruments' -Recurse -Filter 'multisim.exe' -Depth 3 -ErrorAction SilentlyContinue | Select-Object -First 1
+    L "Multisim: $($ms.FullName)"
+}
+
 L '===== conferencia ====='
 L "Solid Edge: $(Test-Path 'C:\Program Files\Siemens\Solid Edge 2026\Program\Edge.exe')"
 $st = Get-ChildItem 'C:\Program Files (x86)\Siemens\SinuTrain', 'C:\Program Files\Siemens\SinuTrain' -Recurse -Filter '*.exe' -Depth 3 -ErrorAction SilentlyContinue | Select-Object -First 3 -ExpandProperty FullName
