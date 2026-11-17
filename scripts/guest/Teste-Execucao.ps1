@@ -12,7 +12,7 @@ $progs = [ordered]@{
     'Eclipse' = 'C:\Program Files\LabApps\Eclipse\eclipse\eclipse.exe'; 'IntelliJ IDEA' = 'C:\Program Files\JetBrains\IntelliJ IDEA*\bin\idea64.exe'
     'Android Studio' = 'C:\Program Files\Android\Android Studio\bin\studio64.exe'; 'Packet Tracer' = 'C:\Program Files\Cisco Packet Tracer 9.0.1\bin\PacketTracer.exe'
     'Wireshark' = 'C:\Program Files\Wireshark\Wireshark.exe'; 'Arduino IDE' = 'C:\Program Files\arduino-ide\Arduino IDE.exe'
-    'VisuAlg' = 'C:\Program Files (x86)\visualg3.0.7\visualg30.exe'; 'Portugol Studio' = 'C:\ProgramData\UNIVALI\Portugol Studio\*.exe'
+    'VisuAlg' = 'C:\Program Files (x86)\visualg3.0.7\visualg30.exe'; 'Portugol Studio' = 'C:\Users\Public\Desktop\Portugol Studio.lnk'
     'Dev-C++' = 'C:\Dev-Cpp\devcpp.exe'; 'CodeBlocks' = 'C:\Program Files\CodeBlocks\codeblocks.exe'
     'VirtualBox' = 'C:\Program Files\Oracle\VirtualBox\VirtualBox.exe'; 'GIMP' = 'C:\Program Files\GIMP 3\bin\gimp-3*.exe'
     'Inkscape' = 'C:\Program Files\Inkscape\bin\inkscape.exe'; 'FreeCAD' = 'C:\Program Files\FreeCAD 1.1\bin\freecad.exe'

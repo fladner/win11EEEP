@@ -5,7 +5,7 @@ Set-Content $out "usuario: $(whoami)  admin: $(([Security.Principal.WindowsPrinc
 $exes = [ordered]@{
     'VS Code' = 'C:\Program Files\Microsoft VS Code\Code.exe'; 'XAMPP (php)' = 'C:\xampp\php\php.exe'; 'MySQL Workbench' = 'C:\Program Files\MySQL\MySQL Workbench*\MySQLWorkbench.exe'
     'LibreOffice' = 'C:\Program Files\LibreOffice\program\soffice.exe'; 'VirtualBox' = 'C:\Program Files\Oracle\VirtualBox\VirtualBox.exe'; 'Python' = 'C:\Program Files\Python314\python.exe'
-    'NetBeans' = 'C:\Program Files\NetBeans-25\netbeans\bin\netbeans64.exe'; 'Arduino IDE' = 'C:\Program Files\arduino-ide\Arduino IDE.exe'; 'Portugol Studio' = 'C:\ProgramData\UNIVALI\Portugol Studio\*.exe'
+    'NetBeans' = 'C:\Program Files\NetBeans-25\netbeans\bin\netbeans64.exe'; 'Arduino IDE' = 'C:\Program Files\arduino-ide\Arduino IDE.exe'; 'Portugol Studio' = 'C:\ProgramData\UNIVALI\Portugol Studio\java\java-windows\bin\javaw.exe'
     'Flutter' = 'C:\Dev\flutter\bin\flutter.bat'; 'Dart' = 'C:\Dev\flutter\bin\dart.bat'; 'AutoCAD' = 'C:\Program Files\Autodesk\AutoCAD 2027\acad.exe'; 'Revit' = 'C:\Program Files\Autodesk\Revit 2027\Revit.exe'
     'Dev-C++' = 'C:\Dev-Cpp\devcpp.exe'; 'Multisim' = 'C:\Program Files (x86)\National Instruments\Circuit Design Suite 14.*\multisim.exe'; 'PSIM' = 'C:\Powersim\PSIM11.1.*_Demo\PSIM.exe'
     'Node.js' = 'C:\Program Files\nodejs\node.exe'; 'IntelliJ IDEA' = 'C:\Program Files\JetBrains\IntelliJ IDEA*\bin\idea64.exe'; 'Git' = 'C:\Program Files\Git\cmd\git.exe'
