@@ -35,6 +35,16 @@ if (Test-Path "${dvd}:\proteus.exe") {
     L "Proteus: $(Test-Path 'C:\Program Files\Labcenter Electronics\Proteus 9 Demonstration\BIN\PDS.EXE')"
 }
 
+L '===== PSIM 11.1.7 Demo (Inno Setup) ====='
+if (Test-Path "${dvd}:\psim.zip") {
+    & $7z e "${dvd}:\psim.zip" "-o$tmp\psim" -y -bso0 -bsp0
+    $ps = Get-ChildItem "$tmp\psim" -Filter '*.exe' | Select-Object -First 1
+    $p = Start-Process $ps.FullName -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-', '/ALLUSERS', "/LOG=`"$tmp\psim.log`"" -PassThru
+    if ($p.WaitForExit(30 * 60000)) { L "PSIM exit=$($p.ExitCode)" } else { L 'PSIM TIMEOUT' }
+    $pe = Get-ChildItem 'C:\Powersim', 'C:\Program Files (x86)\Powersim', 'C:\Program Files\Powersim' -Recurse -Filter 'PSIM.exe' -Depth 3 -ErrorAction SilentlyContinue | Select-Object -First 1
+    L "PSIM: $($pe.FullName)"
+}
+
 L '===== conferencia ====='
 L "Solid Edge: $(Test-Path 'C:\Program Files\Siemens\Solid Edge 2026\Program\Edge.exe')"
 $st = Get-ChildItem 'C:\Program Files (x86)\Siemens\SinuTrain', 'C:\Program Files\Siemens\SinuTrain' -Recurse -Filter '*.exe' -Depth 3 -ErrorAction SilentlyContinue | Select-Object -First 3 -ExpandProperty FullName
