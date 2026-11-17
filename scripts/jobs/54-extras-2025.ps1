@@ -25,6 +25,17 @@ L '===== WinGet (por maquina) ====='
 & $wg source update --name winget 2>&1 | Out-Null
 foreach ($id in 'Microsoft.VCRedist.2015+.x64', 'Microsoft.VCRedist.2015+.x86', 'Git.Git', 'RustDesk.RustDesk', 'CodeBlocks.CodeBlocks', 'OpenJS.NodeJS.LTS', 'JetBrains.IntelliJIDEA.Community') { WG $id }
 
+$xd = (Get-Volume | Where-Object FileSystemLabel -eq 'EEEPEXTRA' | Select-Object -First 1).DriveLetter
+if (-not (Test-Path 'C:\Program Files\RustDesk\rustdesk.exe') -and $xd -and (Test-Path "${xd}:\rustdesk.exe")) {
+    # instalador oficial fornecido pelo usuario (assinatura PURSLANE); --silent-install instala para todos e cria o servico
+    Copy-Item "${xd}:\rustdesk.exe" 'C:\ProgramData\EEEPBuild\rustdesk.exe' -Force
+    L "RustDesk local: assinatura=$((Get-AuthenticodeSignature 'C:\ProgramData\EEEPBuild\rustdesk.exe').Status)"
+    $p = Start-Process 'C:\ProgramData\EEEPBuild\rustdesk.exe' -ArgumentList '--silent-install' -PassThru
+    [void]$p.WaitForExit(10 * 60000)
+    for ($i = 0; $i -lt 30 -and -not (Get-Service RustDesk -ErrorAction SilentlyContinue); $i++) { Start-Sleep 5 }
+    L "RustDesk 1.5.3: exe=$(Test-Path 'C:\Program Files\RustDesk\rustdesk.exe') servico=$((Get-Service RustDesk -ErrorAction SilentlyContinue).Status)"
+    Remove-Item 'C:\ProgramData\EEEPBuild\rustdesk.exe' -Force -ErrorAction SilentlyContinue
+}
 if (-not (Test-Path 'C:\Program Files\RustDesk\rustdesk.exe')) {
     # RustDesk saiu do catalogo do WinGet: MSI x86_64 da release oficial no GitHub (rustdesk/rustdesk)
     try {
