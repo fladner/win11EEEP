@@ -115,3 +115,5 @@ Depois do reinicio do host:
 - Sem AppLocker por enquanto. MySQL Server fica no 8.0. Dev-C++ fica no 4.9.9.2. RustDesk ja atualizado pelo usuario.
 - Licencas dos programas: usuario autorizou aceite automatico. Senha do postgres informada pelo usuario (nao registrar).
 - VM EEEP-2025: DNS fixo 8.8.8.8/1.1.1.1 no adaptador Ethernet (o DNS repassado pelo NAT parou). ANTES DO SYSPREP: Set-DnsClientServerAddress -InterfaceAlias Ethernet -ResetServerAddresses.
+
+- 17/11: a v3 26H2 tambem falhou no PC real (usuario testou). Apagados com autorizacao: VM EEEP-26H2, build\iso, build\winre, v3.iso. A versao 1 usa o INSTALADOR da ISO de 22/02/2025 (F:\EEEP\iso2025) + install.wim capturado (vm\captura\captura2025.vdi); saida G:\EEEP\Win11Pro_EEEP_v1.iso. Snapshots da EEEP-2025: pre-sysprep-v1 (ponto de partida da versao 2) e pos-sysprep-v1.
