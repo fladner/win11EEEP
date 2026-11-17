@@ -50,5 +50,10 @@ $mp = ([Environment]::GetEnvironmentVariable('Path', 'Machine') -split ';') | Wh
 [Environment]::SetEnvironmentVariable('Path', ($mp -join ';'), 'Machine')
 L ("python: " + ((Get-ChildItem 'C:\Program Files\Python3*\python.exe' -ErrorAction SilentlyContinue | ForEach-Object { "$($_.Directory.Name)=$($_.VersionInfo.ProductVersion)" }) -join ' '))
 
+# JDK 17 da Oracle: duplicado mais antigo do Java (o padrao da imagem e o Temurin JDK 21, com JAVA_HOME)
+Remove-Old 'Java(TM) SE Development Kit 17*' @('/s')
+$mp = ([Environment]::GetEnvironmentVariable('Path', 'Machine') -split ';') | Where-Object { $_ -and $_ -notmatch '\\Java\\jdk-17|Oracle\\Java\\javapath' }
+[Environment]::SetEnvironmentVariable('Path', ($mp -join ';'), 'Machine')
+
 L 'fim da segunda passada'
 "C: livre GB: $([math]::Round((Get-PSDrive C).Free/1GB,1))"

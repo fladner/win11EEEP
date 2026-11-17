@@ -23,7 +23,7 @@ function WG($id, $extra = '') {
 
 L '===== WinGet (por maquina) ====='
 & $wg source update --name winget 2>&1 | Out-Null
-foreach ($id in 'Microsoft.VCRedist.2015+.x64', 'Microsoft.VCRedist.2015+.x86', 'Git.Git', 'RustDesk.RustDesk', 'Python.Python.3.14', 'CodeBlocks.CodeBlocks', 'OpenJS.NodeJS.LTS', 'JetBrains.IntelliJIDEA.Community') { WG $id }
+foreach ($id in 'Microsoft.VCRedist.2015+.x64', 'Microsoft.VCRedist.2015+.x86', 'Git.Git', 'RustDesk.RustDesk', 'CodeBlocks.CodeBlocks', 'OpenJS.NodeJS.LTS', 'JetBrains.IntelliJIDEA.Community') { WG $id }
 
 if (-not (Test-Path 'C:\Program Files\RustDesk\rustdesk.exe')) {
     # RustDesk saiu do catalogo do WinGet: MSI x86_64 da release oficial no GitHub (rustdesk/rustdesk)
