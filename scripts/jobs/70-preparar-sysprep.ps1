@@ -3,6 +3,12 @@
 $ErrorActionPreference = 'Continue'
 New-Item -ItemType Directory -Force C:\Windows\Setup\Scripts | Out-Null
 Copy-Item D:\guest\EEEP-PrimeiroBoot.ps1 C:\Windows\Setup\Scripts\EEEP-PrimeiroBoot.ps1 -Force
+# reserva contra o OOBE preso na conta defaultuser0 (ver unattend: SkipMachineOOBE/SkipUserOOBE)
+Copy-Item D:\guest\SetupComplete.cmd C:\Windows\Setup\Scripts\SetupComplete.cmd -Force
+"SetupComplete.cmd: $(Test-Path C:\Windows\Setup\Scripts\SetupComplete.cmd)"
+# DNS fixo usado durante o build volta para o automatico (DHCP) antes de generalizar
+Get-NetAdapter | ForEach-Object { Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ResetServerAddresses -ErrorAction SilentlyContinue }
+'DNS: ' + ((Get-DnsClientServerAddress -AddressFamily IPv4 | Where-Object ServerAddresses | ForEach-Object { "$($_.InterfaceAlias)=$($_.ServerAddresses -join ',')" }) -join ' ')
 $tz = (Get-TimeZone).Id
 $x = [IO.File]::ReadAllText('D:\guest\unattend-sysprep.xml') -replace '<TimeZone>[^<]*</TimeZone>', "<TimeZone>$tz</TimeZone>"
 [IO.File]::WriteAllText('C:\Windows\System32\Sysprep\eeep-unattend.xml', $x, (New-Object Text.UTF8Encoding $false))
