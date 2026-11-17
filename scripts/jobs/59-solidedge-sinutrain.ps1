@@ -4,6 +4,11 @@ $ErrorActionPreference = 'Continue'
 $log = 'C:\ProgramData\EEEPBuild\programas.log'
 function L($m) { $l = "{0} {1}" -f (Get-Date -Format 'HH:mm:ss'), $m; Add-Content $log $l; $l }
 function WaitMsi { for ($i = 0; $i -lt 90 -and (Test-Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\InProgress'); $i++) { Start-Sleep 10 } }
+$v = Get-CimInstance Win32_Volume -Filter "Label='EEEPEXTRA'" | Select-Object -First 1
+if ($v -and -not $v.DriveLetter) {
+    $free = [char[]](69..90) | Where-Object { -not (Test-Path "$($_):\") } | Select-Object -First 1
+    & mountvol "$($free):" $v.DeviceID; L "DVD EEEPEXTRA montado em $($free):"
+}
 $dvd = (Get-Volume | Where-Object FileSystemLabel -eq 'EEEPEXTRA' | Select-Object -First 1).DriveLetter
 if (-not $dvd) { L 'FALHA: DVD EEEPEXTRA nao encontrado'; return }
 $tmp = 'C:\ProgramData\EEEPBuild\extra'; New-Item -ItemType Directory -Force $tmp | Out-Null
