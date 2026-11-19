@@ -209,5 +209,8 @@ Depois do reinicio do host:
 - 19/11: limpeza da v3min autorizada: VMs EEEP-v3 e EEEP-Teste removidas, D:\EEEP\Win11Pro_EEEP_v3min.iso e
   D:\EEEP\iso26h2 apagados, e a copia da ISO oficial em D:\Downloads apagada. Fica so a ISO oficial em
   C:\win11EEEP (usada pelo Montar-ISO.ps1). Unica VM restante: EEEP-v3full.
+- 19/11: limpeza geral autorizada: apagados C:\win11EEEP\build inteiro (instaladores do Revit/AutoCAD 2027, ISO do NI,
+  logs e .viso; os scripts recriam a pasta), as ISOs v1 (G:\EEEP) e v2 (C:\win11EEEP) e F:\EEEP\iso2025. A v3.1 e a
+  ISO de entrega. Mantidos por decisao do usuario: VM EEEP-v3full (base da v3.2) e implantacao-lab-windows11\Pacotes.
 - Rebuild da ISO so depois do diagnostico do notebook (as duas correcoes na mesma recaptura, a partir do snapshot
   pos-sysprep-v3 da EEEP-2025, injetando os scripts no WinPE antes de capturar).
