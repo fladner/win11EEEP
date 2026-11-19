@@ -206,5 +206,8 @@ Depois do reinicio do host:
   Limpeza autorizada: build\iso e vm\captura\captura-v3full.vdi apagados (ISO v3 antiga ja nao existia). C: 336 GB livres.
   Mantida a VM EEEP-v3full (snapshots 07b-docker-desligada e 08-pos-sysprep) para uma futura v3.2.
   Usuario: hipervisor do host reativado (bcdedit auto) e ISO v3.1 ja enviada ao Google Drive.
+- 19/11: limpeza da v3min autorizada: VMs EEEP-v3 e EEEP-Teste removidas, D:\EEEP\Win11Pro_EEEP_v3min.iso e
+  D:\EEEP\iso26h2 apagados, e a copia da ISO oficial em D:\Downloads apagada. Fica so a ISO oficial em
+  C:\win11EEEP (usada pelo Montar-ISO.ps1). Unica VM restante: EEEP-v3full.
 - Rebuild da ISO so depois do diagnostico do notebook (as duas correcoes na mesma recaptura, a partir do snapshot
   pos-sysprep-v3 da EEEP-2025, injetando os scripts no WinPE antes de capturar).
