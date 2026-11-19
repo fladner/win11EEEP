@@ -108,7 +108,7 @@ Depois do reinicio do host:
    (Professional/Retail); gerar com oscdimg (UDF, boot BIOS+UEFI).
 10. Teste: instalar a ISO nova em VM limpa; conferir usuarios, GPOs, programas, servicos do XAMPP, IDs diferentes
     do AnyDesk/RustDesk em duas instalacoes, ausencia dos avisos.
-11. Publicar scripts no GitHub (https://github.com/fladner/win11EEEP) — ainda nao foi feito nenhum commit.
+11. Publicar scripts no GitHub (https://github.com/fladner/win11EEEP) — publicado em 19/11/2026 (branch main, com a v3.1).
 
 ## Decisoes do usuario
 - Usuarios mantidos como estao; ISO instalavel em qualquer PC compativel; sem limite de tamanho.
