@@ -1,4 +1,4 @@
-# ISO EEEP 26H2 — estado do build (atualizado em 15/11/2026, ~16:50)
+﻿# ISO EEEP 26H2 — estado do build (atualizado em 15/11/2026, ~16:50)
 
 ## Como funciona
 - VM VirtualBox `EEEP-26H2` em `C:\win11EEEP\vm` (snapshot `base-25H2-instalada`). Disco 220 GB.
@@ -117,3 +117,94 @@ Depois do reinicio do host:
 - VM EEEP-2025: DNS fixo 8.8.8.8/1.1.1.1 no adaptador Ethernet (o DNS repassado pelo NAT parou). ANTES DO SYSPREP: Set-DnsClientServerAddress -InterfaceAlias Ethernet -ResetServerAddresses.
 
 - 17/11: a v3 26H2 tambem falhou no PC real (usuario testou). Apagados com autorizacao: VM EEEP-26H2, build\iso, build\winre, v3.iso. A versao 1 usa o INSTALADOR da ISO de 22/02/2025 (F:\EEEP\iso2025) + install.wim capturado (vm\captura\captura2025.vdi); saida G:\EEEP\Win11Pro_EEEP_v1.iso. Snapshots da EEEP-2025: pre-sysprep-v1 (ponto de partida da versao 2) e pos-sysprep-v1.
+- 17/11 madrugada: v1 TESTADA em VM limpa (EEEP-Teste, UEFI+TPM+SecureBoot): 2 resets normais, sem looping, sem OOBE, login com Administrador e Aluno (CREDE oculto); EEEP-PrimeiroBoot.log e SetupComplete.log OK; AnyDesk gerou service.conf novo; AnyDesk/RustDesk/PG18/Apache automaticos. Login nas contas: falta o usuario testar (tem senha).
+- 17/11 manha: v2 em andamento. Partiu de pre-sysprep-v1 (que ja estava no build 22631.6199 = ultima cumulativa do 23H2, fim do suporte). Job 90: winget upgrade (Autodesk Access, IntelliJ 2026.3, HelpPack LibreOffice, Firefox 160, MySQL Workbench 26.10, Python Launcher; fora: Orwell Dev-C++, NI Package Manager), recursos WSL/VMP, WSL 3.0.5 (MSI oficial; o winget instalou so para o SYSTEM), Docker Desktop (servico automatico, Aluno em docker-users, atalho na area de trabalho publica). Defender/MSRT atualizados. Snapshot v2-programas-23H2. PENDENTE: usuario decidir se a v2 sobe de versao (24H2/25H2, risco do mesmo looping do 26H2) ou fica no 23H2.
+- 17/11: v1 funcionou perfeitamente no Positivo (confirmado pelo usuario). v2 fica no 23H2 (usuario: "Siga").
+- 17/11: Google Earth Pro adicionado SO na v2 (job 90). Snapshots: v2-programas-23H2 -> v2-com-earth (Earth + job 70; ponto de partida para novos programas) -> pos-sysprep-v2-earth. pos-sysprep-v2 (sem Earth) esta obsoleto. Captura: vm\captura\captura2025-v2.vdi.
+- 17/11: ISO v2 = C:\win11EEEP\Win11Pro_EEEP_v2.iso (65,12 GB) SHA256 79F51115435FBE09B66A3C10BEFC5227DCFF692286F24374B284E14EF2B0C18C. TESTADA em VM limpa: 2 resets normais, sem looping, sem OOBE, login com Administrador e Aluno, PrimeiroBoot.log e SetupComplete.log OK (erros de defaultuser0/DefaultUserName ausentes sao esperados). Falta o usuario testar no Positivo: login do Aluno e "docker run hello-world" (VT-x ligado na BIOS).
+- Aviso: scripts\host\Criar-VM-Teste.ps1 usa ErrorActionPreference=Stop e aborta no createmedium (progresso no stderr); terminei a VM a mao. Corrigir.
+- 17/11: usuario decidiu: Google Earth so na v2; v1 fica como esta.
+- 17/11: v2 TESTADA pelo usuario em notebook real (o mesmo que dava looping com as versoes 26H2 descartadas): instalou OK, docker run hello-world OK. Proximo: v3 = 25H2 final (usuario ja testou 25H2 original no Positivo e funciona) pelo mesmo processo em VM.
+
+## 17/11 noite — CAUSA DO LOOPING DO 26H2 ENCONTRADA
+- O instalador do 26H2 (build 26300) aplica a imagem em C:\$WINDOWS.~BT\NewOS e depois move para C:\. Se o install.wim tem
+  a pasta Windows.old, falha com "CRelocateOS ... Windows.old ... 0x800700B7", mostra "Falha na instalacao do Windows 11"
+  e o PC reinicia em looping. As builds 26H2 antigas vinham de upgrade 25H2->26H2 (Windows.old cheia). 23H2 usa o
+  instalador antigo, sem essa mudanca. Correcao: scripts\capture\capv3.cmd e scripts\v3\v3min.ps1 removem Windows.old,
+  $WINDOWS.~BT e $Windows.~WS antes de capturar/generalizar.
+- v3 minima (26H2 limpo, sem programas, Aluno/Administrador SEM SENHA = so teste): D:\EEEP\Win11Pro_EEEP_v3min.iso
+  SHA256 D5AC05BF6377FC0F50C9AD8C1CE4464F28BE738F202E5D2CFEA9A1C6EC38699F. Testada em VM limpa: 2 resets, sem OOBE, login OK.
+  VM de build: EEEP-v3 (D:\EEEP\vm, autounattend em modo auditoria: scripts\v3\autounattend.xml + v3min.ps1).
+- GPO/papel: scripts\v3\Aplicar-GPO-Papel.ps1 (+ scripts\v3\gpo extraido da v2). Restricoes do Aluno -> politica de
+  "Nao administradores" (GroupPolicyUsers\S-1-5-32-545); papel C:\wallpaper.png para todos (politica geral) + tela de
+  bloqueio/login (PersonalizationCSP). Testado na VM: papel no bloqueio, login e Aluno; personalizacao bloqueada no Aluno.
+- Decisao do usuario: v3 completa = UPGRADE da VM EEEP-2025 (snapshot v2-com-earth, 23H2 com todos os programas, inclusive
+  Adobe CS5.5) para 26H2, limpar Windows.old e a chave HKLM\SYSTEM\Setup\Upgrade, aplicar GPO/papel, sysprep, captura.
+  Upgrade iniciado ~21:20 (setup.exe /auto upgrade /quiet /dynamicupdate disable). NAO usar o disco H: (pedido do usuario).
+- Inventario completo da v3 (caso precise reinstalar do zero): INVENTARIO-V3.md.
+
+## 18/11/2026 - v3 completa (26H2): ISO e testes
+- ISO: D:\EEEP\Win11Pro_EEEP_v3.iso, 66,7 GB, SHA256 399BF5A8D5A45222E8D361823160CAA871815122ED46DBA26540F8E48328305A.
+  Imagem conferida: sem Windows.old, sem system.conf do AnyDesk, sem RustDesk.toml, com wallpaper.png e GPO do Aluno.
+  7z t no install.wim: "Everything is Ok" (1.086.630 arquivos, 159 GB expandido).
+- VM EEEP-Teste (disco C:\win11EEEP\vm\teste\teste-v3full.vdi): instalou com o instalador novo, sem loop, tela de bloqueio
+  e logon com o papel de parede.
+- DEFEITO 1 (corrigido no script, falta entrar na ISO): logon do Aluno -> "Falha na entrada do servico Cliente da
+  Politica de Grupo. Acesso negado." Causa: o sysprep troca o SID das contas locais, mas o NTUSER.DAT do Aluno/CREDE
+  continua com ACL do SID antigo da maquina de montagem. Correcao: scripts\guest\EEEP-CorrigirPerfis.ps1, chamado pelo
+  SetupComplete.cmd. Testado na VM: Aluno entra normalmente.
+- DEFEITO 2 (em investigacao): notebook Acer (SSD 500 GB, ~20 GB RAM) reinicia sem mensagem apos a instalacao, com o
+  instalador novo E com o classico. Setup terminou sem erro (logs em build\logs-note). Boot pelo Strelec
+  ("Search & Start Windows") mostra winload.efi 0xc0000017 (memoria insuficiente). Secure Boot desligado: continua.
+  bootmgfw.efi da imagem identico ao oficial. Proximo passo: Linux live no notebook com SSH por chave
+  (mapa de memoria do firmware, efibootmgr, BCD da particao EFI, montar o Windows somente leitura).
+- 18/11 tarde (Linux live + SSH, so leitura): notebook = Acer Aspire A315-53, i3-7020U (7a geracao), BIOS V2.02 2019,
+  4+16 GB. Mapa de memoria e BCD normais. ISO OFICIAL 26300.9457 instala e INICIA no notebook -> hardware/BIOS nao sao
+  a causa; o defeito esta na nossa imagem. Diferencas (nossa x oficial): hive SYSTEM 17 MB x 11,5 MB; drivers de boot
+  a mais: PxHlpa64 (filtro de CD/DVD de terceiro), fse, lxss, VmsProxy, VMSNPXY; WdBoot/WdFilter da pasta wd\.
+  Proximo teste: v3min (D:\EEEP\Win11Pro_EEEP_v3min.iso, 8,1 GB) no notebook, para separar "processo VM/sysprep/captura"
+  de "programas/upgrade".
+- 18/11: v3min INICIA no notebook -> processo VM/sysprep/captura OK; culpado = programas ou upgrade 23H2->26H2.
+  Usuario decidiu: v3 DO ZERO (26H2 limpo + programas), sem reaproveitar sistemas antigos. Roteiro: ROTEIRO-V3.md;
+  novo script scripts\v3\v3-base-programas.ps1. Apagados com autorizacao: teste-v3full.vdi, captura2025.vdi,
+  captura2025-v2.vdi, D:\EEEP\vm\teste-v3.vdi, D:\EEEP\Win11Pro_EEEP_v3.iso (C: 270 GB livres, D: 122 GB).
+  Pendente: usuario baixar de novo as ISOs do Adobe CS5.5 (apagadas para liberar espaco).
+- 18/11 tarde: VM nova EEEP-v3full (C:\win11EEEP\vm\v3full; 4 CPU, 8 GB, a pedido do usuario) instalada do
+  26H2 oficial 26300.9457 em modo de auditoria. Contas: Aluno + Administrador (CREDE NAO existe mais, pedido do
+  usuario). Referencia limpa: 96 drivers de boot, SYSTEM 10,8 MB (= oficial no notebook). Snapshot 00-limpo-auditoria.
+  Agente: tarefas agendadas ficam "Queued" no modo de auditoria -> agente sobe pela chave Run. DVD porta 1 = kit.viso.
+  Passo 2 em andamento: Install-LabSoftware.ps1 -SkipPostgreSQL -SkipNmap (job v3full-02-kit-user).
+- 18/11 noite: passos 2-6 instalados na EEEP-v3full (kit, base, PG18, engenharia, ALM, Autodesk, simuladores, Nmap/Npcap)
+  e Adobe CS5.5 Master Collection (exit 0; extraido com 7z na VM, ISOs tem cauda de 168 bytes; Acrobat X Pro da suite,
+  sem Acrobat DC). PxHlpa64 veio Start=0 -> ajustado para 3. Drivers de boot seguem 96 em todas as etapas.
+  Snapshot 06c-adobe. Instaladores Adobe apagados da VM e hardlinks build\adobe apagados (originais em Downloads).
+  Agentes apos reboot: Win+R "cmd" e depois "c:\a". Kaspersky do host apagou um job da fila que descompactava .gz
+  em memoria -> evitar esse padrao (usar 7z). Proximo: Docker+WSL e ISO de teste para o notebook.
+- 18/11 noite: WSL 3.0.5 + Docker Desktop (drivers de boot 96 -> 100: lxss, fse, VmsProxy, VMSNPXY, todos do Windows).
+  VBoxSVC 7.2.20 caiu (0xc0000005) num snapshot AO VIVO -> tirar snapshots so com a VM desligada (07b-docker-desligada).
+  VM EEEP-2025 apagada (autorizado). Usuario decidiu ir direto para a ISO final (sem ISO de teste).
+  Passo 8: Postman + extensoes do VS Code no perfil Default (Aluno sem perfil na imagem); GPO/papel aplicados.
+  Energia (pedido do usuario): sem suspensao/hibernacao, tela 15 min (v3-preparar-sysprep.ps1 + EEEP-PrimeiroBoot.ps1).
+  Senhas definidas pelo usuario. Sysprep OK; snapshot 08-pos-sysprep. Boot pelo DVD: Esc -> Boot Manager -> CD-ROM VB1
+  (sem isso a VM sobe pelo disco e comeca o specialize). Captura scripts\capture\capfull.cmd: 41 min, install.wim 62,13 GB.
+- ISO v3 FINAL: C:\win11EEEP\Win11Pro_EEEP_v3.iso, 62,95 GB,
+  SHA256 8F5AA21BB3381E44633668FD3A2764839E85BCA58444CB87AD6B9CF16C583EEF. Falta testar: notebook, VM limpa, Positivo.
+- 19/11: ISO v3 INSTALA E INICIA no notebook Acer (passou do winload; 1o boot rodou script, 2o boot chegou a tela de
+  bloqueio com o papel da escola). Usuario optou por nao testar em VM limpa. Falta: logon Aluno/Administrador, Positivo.
+  Notebook: aviso "modulo impedido na Autoridade de Seguranca Local" = nimdnsNSP.dll (NI mDNS do Multisim) bloqueado pela
+  protecao da LSA (ligada por padrao no 26H2 limpo) -> scripts\guest\EEEP-RemoverNSP-NI.ps1 (testado no notebook: OK).
+  CodeBlocks e SimulIDE nao abriam no Aluno: Program Files\WinGet\Packages so para admins -> icacls Usuarios RX.
+  Demais programas OK no Aluno. Correcoes entrando no install.wim por scripts\capture\patch-nsp.cmd (WinPE) +
+  SetupComplete.cmd novo -> ISO v3.1.
+  PowerShell piscando no logon: Run LabSetupConfigurarUsuario sem o script (60-limpeza apagava C:\ProgramData\LabSetup
+  inteiro; corrigido) -> Configure-LabUser.ps1 devolvido (patch-labuser.cmd). AnyDesk ssl_a000415 no notebook = identidade
+  criada com o relogio 3h adiantado (Linux live); recriar service.conf/system.conf. Nada a mudar na imagem.
+- ISO v3.1: C:\win11EEEP\Win11Pro_EEEP_v3.1.iso, 63,2 GB,
+  SHA256 AACC4A64C0DC083F5B1F2716DB7EA4D74BC09235182946CE4FFC6924FF77619F (patches 1-3 conferidos nos logs).
+  Copia pedida pelo usuario em H:\ISO (pendrive/disco Ventoy), SHA256 conferido.
+- 19/11: v3.1 TESTADA pelo usuario: "comportamento exemplar, tudo dentro do previsto". VERSAO FINAL DA V3.
+  Limpeza autorizada: build\iso e vm\captura\captura-v3full.vdi apagados (ISO v3 antiga ja nao existia). C: 336 GB livres.
+  Mantida a VM EEEP-v3full (snapshots 07b-docker-desligada e 08-pos-sysprep) para uma futura v3.2.
+  Usuario: hipervisor do host reativado (bcdedit auto) e ISO v3.1 ja enviada ao Google Drive.
+- Rebuild da ISO so depois do diagnostico do notebook (as duas correcoes na mesma recaptura, a partir do snapshot
+  pos-sysprep-v3 da EEEP-2025, injetando os scripts no WinPE antes de capturar).

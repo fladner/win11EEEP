@@ -50,7 +50,10 @@ if (Test-Path "$Work\sources\ei.cfg") { "ei.cfg da ISO de origem mantido: $((Get
 else { Set-Content "$Work\sources\ei.cfg" "[EditionID]`r`nProfessional`r`n[Channel]`r`nRetail`r`n[VL]`r`n0" -Encoding ASCII }
 $boot = "2#p0,e,b$Work\boot\etfsboot.com#pEF,e,b$Work\efi\microsoft\boot\efisys.bin"
 New-Item -ItemType Directory -Force (Split-Path $Out) | Out-Null
-& $oscdimg -m -o -u2 -udfver102 -h "-l$Rotulo" "-bootdata:$boot" $Work $Out
-if ($LASTEXITCODE) { throw "oscdimg exit=$LASTEXITCODE" }
+# Start-Process: o oscdimg escreve o progresso no stderr, e com $ErrorActionPreference='Stop' + redirecionamento
+# o PowerShell tratava isso como erro e abortava (19/11)
+$p = Start-Process $oscdimg -ArgumentList '-m', '-o', '-u2', '-udfver102', '-h', "-l$Rotulo", "-bootdata:$boot", $Work, $Out -NoNewWindow -Wait -PassThru `
+    -RedirectStandardError 'C:\win11EEEP\build\oscdimg.err' -RedirectStandardOutput 'C:\win11EEEP\build\oscdimg.out'
+if ($p.ExitCode) { throw "oscdimg exit=$($p.ExitCode)" }
 "ISO gerada: $Out  $([math]::Round((Get-Item $Out).Length/1GB,2)) GB  $(Get-Date -Format HH:mm:ss)"
 "SHA256: $((Get-FileHash $Out -Algorithm SHA256).Hash)"

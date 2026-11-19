@@ -8,7 +8,8 @@ Stop-Service wuauserv, bits, UsoSvc, DoSvc -Force
 
 $targets = @('C:\Windows\Temp\*', 'C:\Windows\SoftwareDistribution\Download\*', 'C:\Windows\Prefetch\*', 'C:\ProgramData\Microsoft\Windows\WER\*',
     'C:\Windows\Logs\CBS\*.cab', 'C:\Windows\Downloaded Program Files\*', 'C:\$WINDOWS.~BT', 'C:\$WINDOWS.~WS', 'C:\Windows.old', 'C:\$GetCurrent', 'C:\MSOCache',
-    'C:\Autodesk', 'C:\ProgramData\LabSetup', 'C:\DumpStack.log*', 'C:\Windows\Panther\*.etl')
+    # LabSetup: sai so o que e instalador; UserConfig\Configure-LabUser.ps1 roda no logon de cada usuario (chave Run)
+    'C:\Autodesk', 'C:\ProgramData\LabSetup\Packages', 'C:\ProgramData\LabSetup\Downloads', 'C:\ProgramData\LabSetup\UserConfig\Packages', 'C:\DumpStack.log*', 'C:\Windows\Panther\*.etl')
 foreach ($u in Get-ChildItem C:\Users -Directory -Force | Where-Object { $_.Name -notin 'Public', 'All Users', 'Default User' }) {
     $targets += "$($u.FullName)\AppData\Local\Temp\*","$($u.FullName)\AppData\Local\Microsoft\Windows\INetCache\*",
         "$($u.FullName)\AppData\Local\Microsoft\Windows\WebCache\*", "$($u.FullName)\AppData\Local\CrashDumps\*", "$($u.FullName)\AppData\Local\Microsoft\Windows\Explorer\thumbcache*",

@@ -10,11 +10,18 @@ Remove-Item 'HKLM:\SOFTWARE\EEEP' -Recurse -Force -ErrorAction SilentlyContinue
 
 Stop-Service AnyDesk, RustDesk -Force -ErrorAction SilentlyContinue
 Get-Process AnyDesk, rustdesk, netmonitor-agent, OneDrive -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
-Remove-Item 'C:\ProgramData\AnyDesk\service.conf' -Force -ErrorAction SilentlyContinue
+# identidade e senha do AnyDesk/RustDesk fora da imagem (decisao do usuario, 17/11); o primeiro boot repete a limpeza
+Remove-Item 'C:\ProgramData\AnyDesk\service.conf*', 'C:\ProgramData\AnyDesk\system.conf*' -Force -ErrorAction SilentlyContinue
+foreach ($c in @('C:\Windows\ServiceProfiles\LocalService\AppData\Roaming\RustDesk\config') + @(Get-ChildItem 'C:\Users\*\AppData\Roaming\RustDesk\config' -Directory -ErrorAction SilentlyContinue | ForEach-Object FullName)) {
+    Remove-Item "$c\RustDesk.toml" -Force -ErrorAction SilentlyContinue
+    if (Test-Path "$c\RustDesk2.toml") { $t = [IO.File]::ReadAllLines("$c\RustDesk2.toml") | Where-Object { $_ -notmatch '^\s*unlock_pin\s*=' }; [IO.File]::WriteAllLines("$c\RustDesk2.toml", [string[]]$t, (New-Object Text.UTF8Encoding $false)) }
+}
 
 # agentes de build fora da imagem
 Unregister-ScheduledTask -TaskName 'EEEPBuild-user' -Confirm:$false -ErrorAction SilentlyContinue
 Unregister-ScheduledTask -TaskName 'EEEPBuild-sys' -Confirm:$false -ErrorAction SilentlyContinue
+# v3 do zero: no modo de auditoria o agente sobe pela chave Run (as tarefas ficam em "Queued")
+Remove-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' -Name 'EEEPBuild-sys', 'EEEPBuild-user' -ErrorAction SilentlyContinue
 Get-ChildItem $w -File -ErrorAction SilentlyContinue | Where-Object { $_.FullName -ne $PSCommandPath -and $_.Name -ne 'Agente.ps1' } | Remove-Item -Force -ErrorAction SilentlyContinue
 & cmd.exe /c "schtasks /create /tn EEEP-LimpaBuild /sc onstart /ru SYSTEM /f /tr `"cmd /c rd /s /q C:\ProgramData\EEEPBuild & schtasks /delete /tn EEEP-LimpaBuild /f`"" | Out-Null
 
